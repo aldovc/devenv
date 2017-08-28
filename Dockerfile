@@ -8,7 +8,7 @@ RUN apt-get install -y \
     curl \
     zsh \
     tmux \
-    vim \
+    vim-nox \
     git \
     make \
     wget \
@@ -35,8 +35,10 @@ RUN git clone https://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh &&\
 # VIM Vundle
 RUN git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 
-# Symlinks
+# Symlink tmux
 RUN ln -s ~/.dotfiles/tmux/tmux.conf ~/.tmux.conf
+
+# Symlink and configure vim with Vundle
 RUN ln -s ~/.dotfiles/vim/vimrc ~/.vimrc && vim +PluginInstall +qall
 
 # Install rbenv
