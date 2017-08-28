@@ -8,7 +8,7 @@ It makes use of my own [dot files](https://github.com/aldovc/dotfiles)
 - `$ docker build -t aldovc/devenv .`
 
 # Start the container
-- `$ docker run -it aldovc/devenv /bin/tmux -u`
+- `$ docker run -it aldovc/devenv /bin/bash`
 
 ### Note for Windows Users (Cygwin)
 You need to install [wintpy](https://github.com/rprichard/winpty) in order to properly interface with Unix terminal.
