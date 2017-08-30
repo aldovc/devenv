@@ -39,6 +39,9 @@ RUN git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.v
 # Symlink tmux
 RUN ln -s ~/.dotfiles/tmux/tmux.conf ~/.tmux.conf
 
+# Compile YCM
+RUN cd ~/.vim/bundle/YouCompleteMe && ./install.py --lang-completer
+
 # Symlink and configure vim with Vundle
 RUN ln -s ~/.dotfiles/vim/vimrc ~/.vimrc && vim +PluginInstall +qall
 
