@@ -10,11 +10,12 @@ RUN apt-get install -y \
     tmux \
     vim-nox \
     git \
-    make \
     wget \
     locales-all \
     gcc \
     build-essential \
+    make \
+    cmake \
     libssl-dev \
     libreadline-dev \
     zlib1g-dev \
@@ -40,6 +41,9 @@ RUN ln -s ~/.dotfiles/tmux/tmux.conf ~/.tmux.conf
 
 # Symlink and configure vim with Vundle
 RUN ln -s ~/.dotfiles/vim/vimrc ~/.vimrc && vim +PluginInstall +qall
+
+# Symlink git
+RUN ln -s ~/.dotfiles/git/gitconfig ~/.gitconfig
 
 # Install rbenv
 RUN git clone git://github.com/sstephenson/rbenv.git /usr/local/rbenv
