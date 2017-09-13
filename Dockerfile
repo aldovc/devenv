@@ -1,7 +1,5 @@
 FROM debian
 
-ENV HOME=/root
-
 RUN apt-get update && apt-get dist-upgrade -y -q && apt-get update && apt-get -y -q autoclean && apt-get -y -q autoremove
 
 RUN apt-get install -y \
@@ -16,31 +14,34 @@ RUN apt-get install -y \
     build-essential \
     make \
     cmake \
-    libssl-dev \
+    libssl1.0-dev \
     libreadline-dev \
     zlib1g-dev \
     python \
     python-pip \
     python-dev \
     python-setuptools \
-    python-virtualenv
+    python-virtualenv \
+    sudo
+
+RUN chmod 440 /etc/sudoers
+
+RUN useradd dev --shell /bin/zsh --create-home && echo "dev:dev" | chpasswd && adduser dev sudo
+
+USER dev
 
 # Getting custom dotfiles
 RUN git clone https://github.com/aldovc/dotfiles.git ~/.dotfiles
 
 # Installing oh-my-zsh
 RUN git clone https://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh &&\
-    cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc &&\
-    chsh -s /bin/zsh
+    cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc
 
 # VIM Vundle
 RUN git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 
 # Symlink tmux
 RUN ln -s ~/.dotfiles/tmux/tmux.conf ~/.tmux.conf
-
-# Compile YCM
-RUN cd ~/.vim/bundle/YouCompleteMe && ./install.py --lang-completer
 
 # Symlink and configure vim with Vundle
 RUN ln -s ~/.dotfiles/vim/vimrc ~/.vimrc && vim +PluginInstall +qall
@@ -49,21 +50,16 @@ RUN ln -s ~/.dotfiles/vim/vimrc ~/.vimrc && vim +PluginInstall +qall
 RUN ln -s ~/.dotfiles/git/gitconfig ~/.gitconfig
 
 # Install rbenv
-RUN git clone git://github.com/sstephenson/rbenv.git /usr/local/rbenv
+RUN git clone git://github.com/rbenv/rbenv.git ~/.rbenv
 
 # Install ruby-build
-RUN git clone https://github.com/sstephenson/ruby-build.git /usr/local/ruby-build && \
-    /usr/local/ruby-build/install.sh
+RUN git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
 
-# Setup rbenv
-ENV RBENV_ROOT /usr/local/rbenv
-ENV PATH $RBENV_ROOT/shims:$RBENV_ROOT/bin:$PATH
-ENV CONFIGURE_OPTS --disable-install-doc
+ENV PATH /home/dev/.rbenv/bin:$PATH
 
-RUN echo "export RBENV_ROOT=${RBENV_ROOT}" >> /etc/profile.d/rbenv.sh && \
-    echo "export PATH=${RBENV_ROOT}/shims:${RBENV_ROOT}/bin:\$PATH" >> /etc/profile.d/rbenv.sh && \
-    echo 'eval "$(rbenv init -)"' >> /etc/profile.d/rbenv.sh
-RUN eval "$(rbenv init -)"
+ENV PATH /home/dev/.rbenv/shims:$PATH
 
 # Install nvm
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
+
+CMD ["/usr/sbin/init"]
