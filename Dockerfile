@@ -1,5 +1,7 @@
 FROM debian
 
+MAINTAINER Aldo Vega <aldovc>
+
 RUN apt-get update && apt-get dist-upgrade -y -q && apt-get update && apt-get -y -q autoclean && apt-get -y -q autoremove
 
 RUN apt-get install -y \
@@ -24,6 +26,7 @@ RUN apt-get install -y \
     python-virtualenv \
     sudo
 
+# Configuring dev user
 RUN chmod 440 /etc/sudoers
 
 RUN useradd dev --shell /bin/zsh --create-home && echo "dev:dev" | chpasswd && adduser dev sudo
@@ -62,4 +65,4 @@ ENV PATH /home/dev/.rbenv/shims:$PATH
 # Install nvm
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
 
-CMD ["/usr/sbin/init"]
+CMD ["/sbin/init"]
